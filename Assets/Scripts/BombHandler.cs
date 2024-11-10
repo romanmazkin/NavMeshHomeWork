@@ -3,61 +3,62 @@ using UnityEngine;
 
 public class BombHandler : MonoBehaviour
 {
+    //Не понимаю почему, но как будто бы бомба срабатывает 2 раза и хп у персонажа отнимаются 2 раза
+
     [SerializeField] private ParticleSystem _explosionParticle;
+    [SerializeField] private AudioController _audioController;
+    [SerializeField] private SphereCollider _triggerCollider;
+    [SerializeField] private float _bombTriggerRadius = 5f;
     [SerializeField] private float _explosionRadius = 5f;
-    [SerializeField] private float _explosionTime = 2f;
+    [SerializeField] private float _timeToExplosion = 2f;
     [SerializeField] private float _damageValue = 30f;
 
-    private bool _isExploded = false;
-    private CharacterView _view;
-    private Health _targetHealth;
-    private Explosion _explosion;
+    private bool _isAlreadyDetonate = false;
 
     private void Awake()
     {
-        _explosion = new Explosion(_explosionRadius, _damageValue);
+        _triggerCollider.radius = _bombTriggerRadius;
     }
 
     private void OnTriggerEnter(Collider other)
     {
-        if (IsCharacter(other))
+        if (other.TryGetComponent(out IDamageable damageableObject))
         {
-            StartCoroutine(Explode(other, _explosionTime));
+            StartCoroutine(StartExplosion());
         }
-    }
-
-    private void OnTriggerStay(Collider other)
-    {
-        if (_isExploded == true && IsCharacter(other))
-        {
-            DealDamageTo(other);
-        }
-    }
-
-    private bool IsCharacter(Collider other)
-    {
-        return other.TryGetComponent<Health>(out _targetHealth);
-    }
-
-    private void DealDamageTo(Collider other)
-    {
-        _explosion.MakeExplosionIn(transform.position, _targetHealth);
-
-        other.GetComponentInChildren<CharacterView>().SetHitAnimation();
-    }
-
-    private IEnumerator Explode(Collider other, float explosionTime)
-    {
-        yield return new WaitForSecondsRealtime(explosionTime);
-
-        _isExploded = true;
-
-        Instantiate(_explosionParticle, transform.position, Quaternion.identity);
     }
 
     private void OnDrawGizmos()
     {
         Gizmos.color = Color.red;
-        Gizmos.DrawWireSphere(transform.position, _explosionRadius);
+        Gizmos.DrawWireSphere(transform.position, _bombTriggerRadius);
+    }
+
+    private IEnumerator StartExplosion()
+    {
+        _isAlreadyDetonate = true;
+
+        while (_timeToExplosion > 0)
+        {
+            _timeToExplosion -= Time.deltaTime;
+            yield return null;
+        }
+
+        Instantiate(_explosionParticle, transform.position, Quaternion.identity);
+
+        Explode();
+
+        _audioController.PlayExplosionSound();
+
+        Destroy(gameObject);
+    }
+
+    private void Explode()
+    {
+        Collider[] explodedColliders = Physics.OverlapSphere(transform.position, _explosionRadius);
+
+        foreach (Collider collider in explodedColliders)
+            if (collider.TryGetComponent(out IDamageable damageable))
+                damageable.TakeDamage(_damageValue);
     }
 }

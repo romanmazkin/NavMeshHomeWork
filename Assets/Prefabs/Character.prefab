@@ -107,16 +107,41 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: caa9f165e2b4f1a4f9522501717c095d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _speed: 3
-  _rotationSpeed: 500
-  _healthValue: 100
-  _characterController: {fileID: 6209788813161531302}
+  _startHealthValue: 100
+  _healthValueWhenWounded: 40
+  _animationDuration: 1
   _view: {fileID: 7578603364240320678}
-  _health: {fileID: 2993981007922270043}
   _agent: {fileID: 8825276394508866731}
+  _health: {fileID: 2993981007922270043}
+  _flag: {fileID: 5289494198418481855, guid: 0ec44c6bc069f5647b84f616eba9f4d2, type: 3}
   _mask:
     serializedVersion: 2
     m_Bits: 64
+  _jumpCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 3.3740587
+      outSlope: 3.3740587
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0.022013651
+    - serializedVersion: 3
+      time: 1
+      value: 0
+      inSlope: -3.4128835
+      outSlope: -3.4128835
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.024754882
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  _audioController: {fileID: 1646974658169195439, guid: e94fd5f3ea4d6c5479c030fb7e01bf70, type: 3}
 --- !u!136 &1789157557210989278
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -132,7 +157,7 @@ CapsuleCollider:
     serializedVersion: 2
     m_Bits: 0
   m_LayerOverridePriority: 0
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 2
@@ -174,7 +199,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 45d1f5ca4d8e47849996722594187de9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _health: 100
 --- !u!1001 &6814089329168507474
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -278,6 +302,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _animator: {fileID: 7552983807939567542}
   _agent: {fileID: 8825276394508866731}
+  _character: {fileID: 6725998564042120948}
 --- !u!4 &6420509472516670905 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: d54fc82172b0ee8408bc7f0454a223d2, type: 3}
